@@ -4,8 +4,10 @@ from app.core.auth import get_current_user
 from app.core.database import database
 from app.models.tables import project_experience
 import uuid
-
+from datetime import datetime, timezone
 router = APIRouter()
+
+
 
 @router.post("/add", response_model=ProjectExperienceOut)
 async def add_project(
@@ -13,6 +15,15 @@ async def add_project(
     user=Depends(get_current_user)
 ):
     generated_id = str(uuid.uuid4())
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    values = {
+        "id": generated_id,
+        "user_id": user["id"],
+        **data.model_dump(exclude_unset=True),
+        "created_at": now_iso,   # or None if DB sets this
+        "updated_at": now_iso    # or None if DB sets this
+    }
 
     query = project_experience.insert().values(
         id=generated_id,
@@ -21,12 +32,7 @@ async def add_project(
     )
     await database.execute(query)
 
-    return ProjectExperienceOut(
-        id=generated_id,
-        user_id=user["id"],
-        **data.model_dump(exclude_unset=True)
-    )
-
+    return values
 @router.get("/all")
 async def get_projects(user=Depends(get_current_user)):
     query = project_experience.select().where(project_experience.c.user_id == user["id"])
