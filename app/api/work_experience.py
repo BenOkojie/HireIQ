@@ -16,7 +16,7 @@ async def add_work_experience(
 
     query = work_experience.insert().values(
         id=generated_id,
-        user_id=user["sub"],
+        user_id=user["id"],
         **data.model_dump(exclude_unset=True)
     )
     await database.execute(query)
@@ -24,7 +24,7 @@ async def add_work_experience(
     # Return the inserted data (you could also query it again if you want fresh DB timestamps)
     return WorkExperienceOut(
         id=generated_id,
-        user_id=user["sub"],
+        user_id=user["id"],
         **data.model_dump(exclude_unset=True)
     )
 

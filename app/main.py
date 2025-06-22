@@ -11,6 +11,7 @@ app.include_router(work_experience.router, prefix="/work_experience")
 @app.on_event("startup")
 async def startup():
     await database.connect()
+    
 
 # DB disconnect on shutdown
 @app.on_event("shutdown")
