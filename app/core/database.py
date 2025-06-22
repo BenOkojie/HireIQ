@@ -3,6 +3,8 @@ from sqlalchemy import MetaData
 import os
 
 # Load DATABASE_URL from env
+from dotenv import load_dotenv
+load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # The database connection (databases library)
